@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TrovoStreamChecker.Trovo;
 
 namespace TrovoStreamChecker
 {
@@ -22,6 +21,7 @@ namespace TrovoStreamChecker
         public Form1()
         {
             InitializeComponent();
+            FormClosed += (s, e) => { cancelTokenSource.Cancel(); };
         }
 
         void UpdateChannels(DataGridView source)
@@ -60,7 +60,7 @@ namespace TrovoStreamChecker
         private void Form1_Load(object sender, EventArgs e)
         {
             dataGridOnline.AutoGenerateColumns = true;
-            dataGridOnline.DataError += dataGridView_DataError;
+            dataGridOnline.DataError += (s, eArgs) => { };
 
             if (!File.Exists(ChannelFileName))
                 File.Create(ChannelFileName);
@@ -105,18 +105,6 @@ namespace TrovoStreamChecker
                     Thread.Sleep(60 * 1000);
                 }
             }, cancelTokenSource.Token).Start();
-        }
-
-        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            cancelTokenSource.Cancel();
-        }
-
-        private void dataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
-        {
-            //DataGridView dataGridView = (DataGridView)sender;
-            //dataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = DateTime.MinValue;
-            //MessageBox.Show("Invalid Date Format", "System Info", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }
