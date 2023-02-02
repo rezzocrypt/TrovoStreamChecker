@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -24,13 +23,15 @@ namespace TrovoStreamChecker
             FormClosed += (s, e) => { cancelTokenSource.Cancel(); };
         }
 
-        void UpdateChannels(DataGridView source)
+        void UpdateChannels(BindingSource source)
         {
             var table = (DataTable)source.DataSource;
             if (table == null)
                 return;
 
-            Parallel.ForEach(table.Rows.Cast<DataRow>(), row =>
+            var rows = table.Rows.Cast<DataRow>().ToArray();
+
+            var result = Parallel.ForEach(rows, row =>
             {
                 int i = 0;
                 while (i <= 10)
@@ -42,24 +43,23 @@ namespace TrovoStreamChecker
                         row[1] = chInfo.category_name;
                         row[2] = chInfo.current_viewers;
                         row[3] = chInfo.is_live ? "✔" : "x";
-
-                        source.Invoke(new Action(() => source.Update()));
                         return;
                     }
                     catch (Exception ex)
                     {
                         row[1] = _defStr;
-                        row[2] = _defStr;
+                        row[2] = 0;
                         row[3] = _defStr;
                         i++;
                     }
                 }
             });
+
+            while (!result.IsCompleted) ;
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            dataGridOnline.AutoGenerateColumns = true;
             dataGridOnline.DataError += (s, eArgs) => { };
 
             if (!File.Exists(ChannelFileName))
@@ -78,30 +78,30 @@ namespace TrovoStreamChecker
             var table = new DataTable();
             table.Columns.Add("Канал");
             table.Columns.Add("Категория");
-            table.Columns.Add("Зрителей");
+            table.Columns.Add(new DataColumn("Зрителей", typeof(long)));
             table.Columns.Add("Онлайн?");
-            if (_raidedStreamers.Length > 0)
-                table.Columns.Add("Рейдил");
-
-            dataGridOnline.DataSource = table;
+            table.Columns.Add("Рейдил");
 
             channels.ForEach(item =>
             {
-                var row = new List<object>();
-                row.AddRange(new[] { item, _defStr, _defStr, _defStr });
-                if (_raidedStreamers.Length > 0)
-                    row.Add(string.Join("", _raidedStreamers.Where(r => r.Equals(item, StringComparison.InvariantCultureIgnoreCase)).Select(i => "✔").ToArray()));
-
-                table.Rows.Add(row.ToArray());
+                table.Rows.Add(new object[] { item, _defStr, 0, _defStr,
+                    string.Join("", _raidedStreamers.Where(r => r.Equals(item, StringComparison.InvariantCultureIgnoreCase)).Select(i => "✔").ToArray())
+                });
             });
 
+            var bindingSource = new BindingSource();
+            bindingSource.DataSource = table;
+            dataGridOnline.DataSource = bindingSource;
+            dataGridOnline.Columns[4].Visible = _raidedStreamers.Length > 0;
             dataGridOnline.Sort(dataGridOnline.Columns[3], System.ComponentModel.ListSortDirection.Ascending);
+
+            dataGridOnline.Refresh();
 
             new Task(() =>
             {
                 while (true)
                 {
-                    UpdateChannels(dataGridOnline);
+                    UpdateChannels(bindingSource);
                     Thread.Sleep(60 * 1000);
                 }
             }, cancelTokenSource.Token).Start();
