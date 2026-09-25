@@ -64,7 +64,7 @@ async function onImportChange(event) {
       <button type="button" class="btn btn-primary" :disabled="!draft.trim()" @click="add">
         Добавить
       </button>
-      <button type="button" class="btn btn-secondary" title="Импорт channels.json" @click="onImportClick">
+      <button type="button" class="btn btn-secondary" title="Импорт каналов" @click="onImportClick">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
           <polyline points="7 10 12 15 17 10" />
@@ -75,7 +75,7 @@ async function onImportChange(event) {
       <button
         type="button"
         class="btn btn-secondary"
-        title="Экспорт channels.json"
+        title="Экспорт каналов"
         :disabled="!channels.length"
         @click="emit('export')"
       >

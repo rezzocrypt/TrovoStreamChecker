@@ -8,11 +8,25 @@ import { downloadText } from './components/ChannelManager.vue'
 
 const DEFAULT_PLATFORM = platforms[0]?.id
 
+const themeOptions = [
+  { value: 'system', label: 'Система' },
+  { value: 'light', label: 'Светлая' },
+  { value: 'dark', label: 'Тёмная' },
+]
+
 const channels = useLocalStorage('tsc:channels', () => [])
 const settings = useLocalStorage('tsc:settings', () => ({
   intervalSeconds: 60,
-  autoRefresh: true,
+  theme: 'system',
 }))
+
+function applyTheme(theme) {
+  const root = document.documentElement
+  if (theme === 'light' || theme === 'dark') root.dataset.theme = theme
+  else delete root.dataset.theme
+}
+
+watch(() => settings.value.theme, applyTheme, { immediate: true })
 
 channels.value = normalizeChannels(channels.value)
 
@@ -50,6 +64,7 @@ const updating = ref(false)
 const lastUpdated = ref(null)
 const allFailed = ref(false)
 const lastError = ref('')
+const showSettings = ref(false)
 
 const emptyStatus = {
   online: null,
@@ -192,12 +207,9 @@ let timer = null
 
 function schedule() {
   clearInterval(timer)
-  if (settings.value.autoRefresh) {
-    timer = setInterval(refreshAll, Math.max(5, Number(settings.value.intervalSeconds) || 60) * 1000)
-  }
+  timer = setInterval(refreshAll, Math.max(5, Number(settings.value.intervalSeconds) || 60) * 1000)
 }
 
-watch(() => settings.value.autoRefresh, schedule)
 watch(() => settings.value.intervalSeconds, schedule)
 
 onMounted(() => {
@@ -221,33 +233,58 @@ const lastUpdatedText = computed(() =>
     <header>
       <h1>Стримеры онлайн</h1>
       <div class="toolbar">
-        <button type="button" class="btn btn-primary" :disabled="updating || !channels.length" @click="refreshAll">
-          {{ updating ? 'Обновляю…' : 'Обновить сейчас' }}
+        <span class="status" :class="{ updating }">
+          <span v-if="updating" class="spinner" />{{ lastUpdatedText }}
+        </span>
+        <button
+          type="button"
+          class="btn btn-secondary icon-btn"
+          title="Обновить сейчас"
+          :disabled="updating || !channels.length"
+          @click="refreshAll"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10" />
+            <polyline points="1 20 1 14 7 14" />
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+          </svg>
         </button>
-        <label class="checkbox">
-          <input v-model="settings.autoRefresh" type="checkbox" />
-          Автообновление
-        </label>
-        <label class="field">
-          каждые
-          <input
-            v-model.number="settings.intervalSeconds"
-            type="number"
-            min="5"
-            step="5"
-            :disabled="!settings.autoRefresh"
-          />
-          <span>сек</span>
-        </label>
+        <div class="settings-wrap">
+          <button
+            type="button"
+            class="btn btn-secondary icon-btn"
+            :class="{ active: showSettings }"
+            title="Настройки"
+            @click="showSettings = !showSettings"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+          </button>
+          <div v-if="showSettings" class="settings-menu">
+            <label class="field settings-refresh">
+              <span>Обновлять каждые</span>
+              <input v-model.number="settings.intervalSeconds" type="number" min="5" step="5" />
+              <span>сек</span>
+            </label>
+            <div class="theme-switch">
+              <button
+                v-for="option in themeOptions"
+                :key="option.value"
+                type="button"
+                class="theme-btn"
+                :class="{ active: settings.theme === option.value }"
+                @click="settings.theme = option.value"
+              >
+                {{ option.label }}
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </header>
-
-    <div class="bar">
-      <span class="status" :class="{ updating }">
-        <span v-if="updating" class="spinner" />{{ lastUpdatedText }}
-      </span>
-      <span v-if="allFailed" class="alert">{{ lastError }}</span>
-    </div>
+    <div v-if="showSettings" class="settings-backdrop" @click="showSettings = false"></div>
 
     <ChannelManager
       :channels="channels"

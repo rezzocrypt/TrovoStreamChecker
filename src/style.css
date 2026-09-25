@@ -1,4 +1,49 @@
 :root {
+  color-scheme: dark;
+  --bg: #0f1115;
+  --panel: #171a21;
+  --panel-2: #1e222c;
+  --border: #2a2f3a;
+  --text: #e6e9ef;
+  --muted: #8b93a1;
+  --accent: #4c8dff;
+  --green: #2ecc71;
+  --red: #e74c3c;
+  --amber: #f39c12;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+    --bg: #f4f6f9;
+    --panel: #ffffff;
+    --panel-2: #eef1f6;
+    --border: #d5dae3;
+    --text: #1b1f27;
+    --muted: #69707e;
+    --accent: #2f6bdf;
+    --green: #1aa15c;
+    --red: #d6342a;
+    --amber: #cf7d08;
+  }
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f4f6f9;
+  --panel: #ffffff;
+  --panel-2: #eef1f6;
+  --border: #d5dae3;
+  --text: #1b1f27;
+  --muted: #69707e;
+  --accent: #2f6bdf;
+  --green: #1aa15c;
+  --red: #d6342a;
+  --amber: #cf7d08;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
   --bg: #0f1115;
   --panel: #171a21;
   --panel-2: #1e222c;
@@ -154,6 +199,90 @@ select:focus {
   width: 70px;
 }
 
+.theme-switch {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.theme-btn {
+  border: none;
+  background: var(--panel-2);
+  color: var(--muted);
+  font-size: 12px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.theme-btn + .theme-btn {
+  border-left: 1px solid var(--border);
+}
+
+.theme-btn:hover:not(.active) {
+  color: var(--text);
+}
+
+.theme-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.toolbar .status {
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+.settings-wrap {
+  position: relative;
+}
+
+.settings-wrap .icon-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.settings-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  min-width: 220px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.settings-menu .theme-switch {
+  align-self: center;
+}
+
+.settings-menu .field {
+  width: 100%;
+}
+
+.settings-menu .settings-refresh {
+  justify-content: flex-start;
+  white-space: nowrap;
+}
+
+.settings-menu .settings-refresh input[type='number'] {
+  width: 58px;
+}
+
+.settings-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+}
+
 .checkbox {
   display: inline-flex;
   align-items: center;
@@ -203,24 +332,10 @@ select:focus {
   color: var(--red);
 }
 
-.bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--muted);
-  font-size: 12.5px;
-  min-height: 20px;
-  flex-wrap: wrap;
-}
-
 .status {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-}
-
-.alert {
-  color: var(--amber);
 }
 
 .spinner {
