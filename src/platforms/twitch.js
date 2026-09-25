@@ -1,9 +1,11 @@
+import { cleanLogins } from './utils'
+
 const GQL_URL = 'https://gql.twitch.tv/gql'
 
 const WEB_CLIENT_ID = 'kimne78kx3ncx6brgo4mv6wki5h1ko'
 
 export async function checkChannels(logins) {
-  const cleaned = logins.map((l) => String(l).trim()).filter(Boolean)
+  const cleaned = cleanLogins(logins)
 
   const fields = cleaned.map(
     (login, i) =>

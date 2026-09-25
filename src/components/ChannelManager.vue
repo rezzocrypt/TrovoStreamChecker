@@ -12,6 +12,7 @@ export function downloadText(filename, text) {
 
 <script setup>
 import { ref } from 'vue'
+import SvgIcon from './SvgIcon.vue'
 import { platforms } from '../platforms'
 
 defineProps({
@@ -65,11 +66,7 @@ async function onImportChange(event) {
         Добавить
       </button>
       <button type="button" class="btn btn-secondary" title="Импорт каналов" @click="onImportClick">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-          <polyline points="7 10 12 15 17 10" />
-          <line x1="12" y1="15" x2="12" y2="3" />
-        </svg>
+        <SvgIcon name="import" />
       </button>
       <input ref="fileInput" type="file" accept=".json,application/json" hidden @change="onImportChange" />
       <button
@@ -79,11 +76,7 @@ async function onImportChange(event) {
         :disabled="!channels.length"
         @click="emit('export')"
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-          <polyline points="17 8 12 3 7 8" />
-          <line x1="12" y1="3" x2="12" y2="15" />
-        </svg>
+        <SvgIcon name="export" />
       </button>
     </div>
   </section>

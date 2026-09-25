@@ -1,23 +1,16 @@
+import { cleanLogins, notFoundResult } from './utils'
+
 const API = 'https://kick.com/api/v2/channels'
 
 export async function checkChannels(logins) {
-  const cleaned = logins.map((l) => String(l).trim()).filter(Boolean)
+  const cleaned = cleanLogins(logins)
 
   return Promise.all(
     cleaned.map(async (login) => {
       const res = await fetch(`${API}/${encodeURIComponent(login.toLowerCase())}`)
 
       if (res.status === 404) {
-        return {
-          login,
-          exists: false,
-          online: false,
-          viewers: null,
-          title: null,
-          game: null,
-          startedAt: null,
-          avatar: null,
-        }
+        return notFoundResult(login)
       }
 
       if (!res.ok) {

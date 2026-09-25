@@ -283,14 +283,6 @@ select:focus {
   z-index: 20;
 }
 
-.checkbox {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--muted);
-  cursor: pointer;
-}
-
 .platform-icon {
   display: inline-block;
   flex-shrink: 0;
@@ -326,6 +318,8 @@ select:focus {
 
 .tag-remove svg {
   display: block;
+  width: 14px;
+  height: 14px;
 }
 
 .tag-remove:hover {

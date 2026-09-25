@@ -1,3 +1,5 @@
+import { cleanLogins, notFoundResult } from './utils'
+
 const BASE = '/vkplay-api'
 
 function streamUrl(slug) {
@@ -5,23 +7,14 @@ function streamUrl(slug) {
 }
 
 async function checkChannels(logins) {
-  const cleaned = logins.map((l) => String(l).trim()).filter(Boolean)
+  const cleaned = cleanLogins(logins)
 
   return Promise.all(
     cleaned.map(async (login) => {
       const res = await fetch(streamUrl(login))
 
       if (!res.ok) {
-        return {
-          login,
-          exists: false,
-          online: false,
-          viewers: null,
-          title: null,
-          game: null,
-          startedAt: null,
-          avatar: null,
-        }
+        return notFoundResult(login)
       }
 
       const data = await res.json()
