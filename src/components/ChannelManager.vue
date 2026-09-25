@@ -1,6 +1,17 @@
+<script>
+export function downloadText(filename, text) {
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
+}
+</script>
+
 <script setup>
 import { ref } from 'vue'
-import FileImportButton from './FileImportButton.vue'
 import { platforms } from '../platforms'
 
 defineProps({
@@ -11,6 +22,7 @@ const emit = defineEmits(['add', 'import', 'export'])
 
 const draft = ref('')
 const platform = ref(platforms[0]?.id)
+const fileInput = ref(null)
 
 function add() {
   const value = draft.value
@@ -18,7 +30,24 @@ function add() {
   if (value.trim()) emit('add', value, platform.value)
 }
 
-function onImport(text) {
+function onImportClick() {
+  fileInput.value?.click()
+}
+
+function readFileText(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result ?? ''))
+    reader.onerror = () => reject(reader.error)
+    reader.readAsText(file)
+  })
+}
+
+async function onImportChange(event) {
+  const file = event.target.files?.[0]
+  event.target.value = ''
+  if (!file) return
+  const text = await readFileText(file)
   emit('import', text)
 }
 </script>
@@ -35,12 +64,26 @@ function onImport(text) {
       <button type="button" class="btn btn-primary" :disabled="!draft.trim()" @click="add">
         Добавить
       </button>
-    </div>
-
-    <div class="btn-row">
-      <FileImportButton label="Импорт channels.json" accept=".json,application/json" @import="onImport" />
-      <button type="button" class="btn btn-secondary" :disabled="!channels.length" @click="emit('export')">
-        Экспорт channels.json
+      <button type="button" class="btn btn-secondary" title="Импорт channels.json" @click="onImportClick">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" y1="15" x2="12" y2="3" />
+        </svg>
+      </button>
+      <input ref="fileInput" type="file" accept=".json,application/json" hidden @change="onImportChange" />
+      <button
+        type="button"
+        class="btn btn-secondary"
+        title="Экспорт channels.json"
+        :disabled="!channels.length"
+        @click="emit('export')"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="17 8 12 3 7 8" />
+          <line x1="12" y1="3" x2="12" y2="15" />
+        </svg>
       </button>
     </div>
   </section>

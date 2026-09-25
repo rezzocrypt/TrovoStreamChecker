@@ -74,12 +74,18 @@ h2 {
 .btn {
   border: 1px solid transparent;
   border-radius: 6px;
-  padding: 6px 12px;
+  padding: 6px 10px;
   font-size: 13px;
   cursor: pointer;
   color: var(--text);
   background: var(--panel-2);
   transition: filter 0.15s;
+}
+
+.btn svg {
+  width: 16px;
+  height: 16px;
+  display: block;
 }
 
 .btn:hover:not(:disabled) {
@@ -125,7 +131,12 @@ select:focus {
 .add-row {
   display: flex;
   gap: 8px;
-  margin-bottom: 10px;
+  flex-wrap: nowrap;
+}
+
+.add-row .btn {
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .add-row input {

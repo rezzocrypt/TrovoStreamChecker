@@ -4,7 +4,7 @@ import ChannelTable from './components/ChannelTable.vue'
 import ChannelManager from './components/ChannelManager.vue'
 import { platforms, getPlatform } from './platforms'
 import { useLocalStorage } from './composables/useLocalStorage'
-import { downloadText } from './utils/files'
+import { downloadText } from './components/ChannelManager.vue'
 
 const DEFAULT_PLATFORM = platforms[0]?.id
 
