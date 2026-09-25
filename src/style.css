@@ -151,19 +151,24 @@ select:focus {
   cursor: pointer;
 }
 
-.platform-logo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.platform-icon {
+  display: inline-block;
+  flex-shrink: 0;
   width: 18px;
   height: 18px;
-  flex-shrink: 0;
+  border-radius: 3px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  vertical-align: middle;
 }
 
-.platform-logo svg {
-  width: 100%;
-  height: 100%;
-  display: block;
+.platform-icon.platform-twitch {
+  background-image: url('https://assets.twitch.tv/assets/favicon-32-e29e246c157142c94346.png');
+}
+
+.platform-icon.platform-kick {
+  background-image: url('https://kick.com/favicon.ico');
 }
 
 .tag-remove {

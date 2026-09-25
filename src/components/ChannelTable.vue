@@ -45,7 +45,7 @@ function platformById(id) {
       </tr>
       <tr v-for="row in rows" :key="`${row.platform}:${row.name.toLowerCase()}`">
         <td class="col-platform">
-          <span class="platform-logo" v-html="platformById(row.platform)?.logo || ''" />
+          <span :class="`platform-icon platform-${row.platform}`"></span>
         </td>
         <td class="col-channel">
           <img v-if="row.avatar" :src="row.avatar" class="avatar" alt="" />

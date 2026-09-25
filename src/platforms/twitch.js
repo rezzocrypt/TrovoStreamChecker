@@ -2,9 +2,6 @@ const GQL_URL = 'https://gql.twitch.tv/gql'
 
 const WEB_CLIENT_ID = 'kimne78kx3ncx6brgo4mv6wki5h1ko'
 
-const LOGO =
-  '<svg viewBox="0 0 2400 2800" xmlns="http://www.w3.org/2000/svg"><path fill="#9146FF" d="M2200 1300l-400 400h-400l-350 350v-350H600V0h1600v1300zM1700 550h-200v600h200V550zM1200 550H1000v600h200V550z"/></svg>'
-
 export async function checkChannels(logins) {
   const cleaned = logins.map((l) => String(l).trim()).filter(Boolean)
 
@@ -53,7 +50,6 @@ export async function checkChannels(logins) {
 export const twitch = {
   id: 'twitch',
   name: 'Twitch',
-  logo: LOGO,
   checkChannels,
   channelUrl: (name) => `https://www.twitch.tv/${encodeURIComponent(name)}`,
 }

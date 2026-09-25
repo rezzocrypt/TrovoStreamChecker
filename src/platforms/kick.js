@@ -1,8 +1,5 @@
 const API = 'https://kick.com/api/v2/channels'
 
-const LOGO =
-  '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#53FC18" d="M18.94 3.06a10.5 10.5 0 0 0-1.71 20.32l-4.2-5.56h2.62v-4.56h-4.9L9.6 3.06h9.34z"/></svg>'
-
 export async function checkChannels(logins) {
   const cleaned = logins.map((l) => String(l).trim()).filter(Boolean)
 
@@ -47,7 +44,6 @@ export async function checkChannels(logins) {
 export const kick = {
   id: 'kick',
   name: 'Kick',
-  logo: LOGO,
   checkChannels,
   channelUrl: (name) => `https://kick.com/${encodeURIComponent(name)}`,
 }

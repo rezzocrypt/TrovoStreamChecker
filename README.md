@@ -6,7 +6,7 @@
 
 ## Платформы
 - **Twitch** — публичный GraphQL-эндпоинт `gql.twitch.tv`
-- **Лшсл** - публичный API
+- **Kick** - публичный API
 
 Чтобы добавить новую платформу: создайте модуль по образцу `src/platforms/twitch.js` и добавьте его в массив `platforms` в `src/platforms/index.js`.
 
@@ -36,6 +36,6 @@ npm run preview
 ```json
 [
   { "platform": "twitch", "name": "shroud" },
-  { "platform": "youtube", "name": "somechannel" }
+  { "platform": "kick", "name": "destiny" }
 ]
 ```
