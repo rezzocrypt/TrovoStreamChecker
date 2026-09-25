@@ -171,14 +171,21 @@ select:focus {
   background-image: url('https://kick.com/favicon.ico');
 }
 
+.platform-icon.platform-vkplay {
+  background-image: url('https://static.live.vkvideo.ru/static/favicon.png');
+}
+
 .tag-remove {
   border: none;
   background: transparent;
   color: var(--muted);
   cursor: pointer;
-  font-size: 14px;
   line-height: 1;
-  padding: 0 2px;
+  padding: 2px;
+}
+
+.tag-remove svg {
+  display: block;
 }
 
 .tag-remove:hover {
@@ -223,6 +230,7 @@ select:focus {
 
 table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   background: var(--panel);
   border: 1px solid var(--border);
@@ -241,11 +249,17 @@ thead th {
   padding: 10px 12px;
   border-bottom: 1px solid var(--border);
   background: var(--panel-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 tbody td {
   padding: 8px 12px;
   border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 tbody tr:last-child td {
@@ -257,18 +271,25 @@ tbody tr:hover {
 }
 
 .col-platform {
-  width: 8%;
+  width: 37px;
   text-align: center;
+  overflow: hidden;
+  text-overflow: clip;
 }
 
 .col-channel {
-  width: 23%;
+  width: 20%;
 }
 
 .col-channel a {
+  display: inline-block;
+  max-width: calc(100% - 46px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
   color: var(--text);
   text-decoration: none;
-  vertical-align: middle;
 }
 
 .col-channel a:hover {
@@ -297,7 +318,17 @@ tbody tr:hover {
 }
 
 .col-status {
-  width: 13%;
+  width: 37px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.th-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
 }
 
 .col-viewers {
@@ -311,17 +342,21 @@ th.col-viewers {
 }
 
 .col-start {
-  width: 12%;
+  width: 8%;
   color: var(--muted);
 }
 
 .col-game {
   width: 14%;
   color: var(--text);
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .col-title {
-  width: 21%;
+  width: 34%;
   color: var(--muted);
   max-width: 0;
   overflow: hidden;
@@ -329,32 +364,55 @@ th.col-viewers {
   white-space: nowrap;
 }
 
-.badge {
+.col-remove {
+  width: 37px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+th.col-game,
+th.col-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dot {
   display: inline-block;
-  border-radius: 999px;
-  padding: 2px 10px;
-  font-size: 12px;
-  font-weight: 600;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  vertical-align: middle;
 }
 
-.badge-live {
-  background: rgba(46, 204, 113, 0.15);
-  color: var(--green);
+.dot-live {
+  background: var(--green);
+  box-shadow: 0 0 6px rgba(46, 204, 113, 0.6);
 }
 
-.badge-offline {
-  background: rgba(139, 147, 161, 0.15);
-  color: var(--muted);
+.dot-offline {
+  background: transparent;
+  border: 2px solid var(--muted);
 }
 
-.badge-updating {
-  background: rgba(243, 156, 18, 0.15);
-  color: var(--amber);
+.dot-updating {
+  background: var(--amber);
+  animation: pulse 1.2s ease-in-out infinite;
 }
 
-.badge-na {
-  background: rgba(231, 76, 60, 0.15);
-  color: var(--red);
+.dot-error {
+  background: var(--red);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
 }
 
 .empty {

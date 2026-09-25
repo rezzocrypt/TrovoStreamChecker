@@ -118,10 +118,6 @@ async function refreshAll() {
   allFailed.value = false
   lastError.value = ''
 
-  for (const entry of list) {
-    status[keyOf(entry)] = { ...emptyStatus }
-  }
-
   const byPlatform = new Map()
   for (const entry of list) {
     if (!byPlatform.has(entry.platform)) byPlatform.set(entry.platform, [])
@@ -141,9 +137,6 @@ async function refreshAll() {
       okCount += 1
     } catch (e) {
       errors.push(`${platform.name}: ${e?.message || 'ошибка запроса'}`)
-      for (const entry of entries) {
-        status[keyOf(entry)] = { ...emptyStatus, error: true }
-      }
     }
   }
 

@@ -6,7 +6,8 @@
 
 ## Платформы
 - **Twitch** — публичный GraphQL-эндпоинт `gql.twitch.tv`
-- **Kick** - публичный API
+- **Kick** — публичный API `kick.com/api/v2`
+- **VK Play** — публичный API `api.live.vkvideo.ru` через локальный прокси `/vkplay-api` (в `vite.config.js`): работают `npm run dev` и `npm run preview`. При развёртывании статики на другом сервере нужно настроить аналогичный прокси на `https://api.live.vkvideo.ru/v1`.
 
 Чтобы добавить новую платформу: создайте модуль по образцу `src/platforms/twitch.js` и добавьте его в массив `platforms` в `src/platforms/index.js`.
 
