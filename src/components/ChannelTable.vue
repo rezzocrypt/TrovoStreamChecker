@@ -16,6 +16,20 @@ function formatText(v) {
   return v ?? '—'
 }
 
+function parseKickTime(v) {
+  return /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(v) ? v.replace(' ', 'T') + 'Z' : v
+}
+
+function formatStart(v) {
+  if (!v) return '—'
+  const date = new Date(parseKickTime(v))
+  if (Number.isNaN(date.getTime())) return '—'
+  const sameDay = date.toDateString() === new Date().toDateString()
+  return sameDay
+    ? date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+    : date.toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+}
+
 function initial(name) {
   return String(name).charAt(0).toUpperCase()
 }
@@ -33,13 +47,14 @@ function platformById(id) {
         <th class="col-channel">Стример</th>
         <th class="col-status">Онлайн?</th>
         <th class="col-viewers">Зрителей</th>
+        <th class="col-start">Начало</th>
         <th class="col-game">Игра</th>
         <th class="col-title">Название трансляции</th>
       </tr>
     </thead>
     <tbody>
       <tr v-if="!rows.length">
-        <td colspan="6" class="empty">
+        <td colspan="7" class="empty">
           Каналов нет — добавьте их в списке выше или импортируйте channels.json.
         </td>
       </tr>
@@ -68,6 +83,7 @@ function platformById(id) {
           <span v-else class="badge badge-offline">✕ оффлайн</span>
         </td>
         <td class="col-viewers">{{ formatViewers(row.viewers) }}</td>
+        <td class="col-start">{{ formatStart(row.startedAt) }}</td>
         <td class="col-game">{{ formatText(row.game) }}</td>
         <td class="col-title" :title="formatText(row.title)">{{ formatText(row.title) }}</td>
       </tr>

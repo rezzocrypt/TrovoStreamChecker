@@ -15,6 +15,7 @@ export async function checkChannels(logins) {
           viewers: null,
           title: null,
           game: null,
+          startedAt: null,
           avatar: null,
         }
       }
@@ -35,6 +36,7 @@ export async function checkChannels(logins) {
         viewers: stream?.viewer_count ?? null,
         title: stream?.session_title ?? null,
         game: stream?.categories?.[0]?.name ?? null,
+        startedAt: stream?.start_time ?? null,
         avatar: data?.user?.profile_pic ?? null,
       }
     }),

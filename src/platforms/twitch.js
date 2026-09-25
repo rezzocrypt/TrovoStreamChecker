@@ -7,7 +7,7 @@ export async function checkChannels(logins) {
 
   const fields = cleaned.map(
     (login, i) =>
-      `c${i}: user(login: ${JSON.stringify(login)}) { profileImageURL(width: 300) stream { id title viewersCount game { displayName } } }`,
+      `c${i}: user(login: ${JSON.stringify(login)}) { profileImageURL(width: 300) stream { id title viewersCount createdAt game { displayName } } }`,
   )
 
   const res = await fetch(GQL_URL, {
@@ -42,6 +42,7 @@ export async function checkChannels(logins) {
       viewers: user?.stream?.viewersCount ?? null,
       title: user?.stream?.title ?? null,
       game: user?.stream?.game?.displayName ?? null,
+      startedAt: user?.stream?.createdAt ?? null,
       avatar: user?.profileImageURL ?? null,
     }
   })

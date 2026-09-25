@@ -257,12 +257,12 @@ tbody tr:hover {
 }
 
 .col-platform {
-  width: 9%;
+  width: 8%;
   text-align: center;
 }
 
 .col-channel {
-  width: 24%;
+  width: 23%;
 }
 
 .col-channel a {
@@ -297,11 +297,11 @@ tbody tr:hover {
 }
 
 .col-status {
-  width: 14%;
+  width: 13%;
 }
 
 .col-viewers {
-  width: 11%;
+  width: 9%;
   color: var(--muted);
   text-align: right;
 }
@@ -310,13 +310,18 @@ th.col-viewers {
   text-align: right;
 }
 
+.col-start {
+  width: 12%;
+  color: var(--muted);
+}
+
 .col-game {
-  width: 16%;
+  width: 14%;
   color: var(--text);
 }
 
 .col-title {
-  width: 26%;
+  width: 21%;
   color: var(--muted);
   max-width: 0;
   overflow: hidden;

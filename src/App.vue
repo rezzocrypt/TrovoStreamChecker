@@ -51,28 +51,64 @@ const lastUpdated = ref(null)
 const allFailed = ref(false)
 const lastError = ref('')
 
+const emptyStatus = {
+  online: null,
+  error: false,
+  viewers: null,
+  title: null,
+  game: null,
+  startedAt: null,
+  avatar: null,
+}
+
 const rows = computed(() =>
   channels.value.map((entry) => {
-    const st = status[keyOf(entry)] || {
-      online: null,
-      error: false,
-      viewers: null,
-      title: null,
-      game: null,
-      avatar: null,
-    }
+    const st = status[keyOf(entry)] || { ...emptyStatus }
     return { ...entry, ...st }
   }),
 )
 
 const sortedRows = computed(() =>
   [...rows.value].sort((a, b) => {
-    const oa = a.error ? -1 : a.online === true ? 1 : a.online === false ? 0 : -1
-    const ob = b.error ? -1 : b.online === true ? 1 : b.online === false ? 0 : -1
-    if (oa !== ob) return ob - oa
+    const rankA = a.error ? 2 : a.online === true ? 0 : a.online === false ? 1 : 2
+    const rankB = b.error ? 2 : b.online === true ? 0 : b.online === false ? 1 : 2
+    if (rankA !== rankB) return rankA - rankB
+    if (rankA === 0) {
+      const va = a.viewers ?? 0
+      const vb = b.viewers ?? 0
+      if (va !== vb) return vb - va
+    }
     return a.name.localeCompare(b.name, 'ru')
   }),
 )
+
+function applyResult(entry, r) {
+  if (!r) return
+  status[keyOf(entry)] = r.exists
+    ? {
+        online: r.online,
+        error: false,
+        viewers: r.viewers,
+        title: r.title,
+        game: r.game,
+        startedAt: r.startedAt ?? null,
+        avatar: r.avatar ?? null,
+      }
+    : { ...emptyStatus, error: true }
+}
+
+async function checkOne(entry) {
+  const platform = getPlatform(entry.platform)
+  if (!platform) return
+  status[keyOf(entry)] = { ...emptyStatus }
+  try {
+    const results = await platform.checkChannels([entry.name])
+    const r = results[0]
+    if (r) applyResult(entry, r)
+  } catch {
+    status[keyOf(entry)] = { ...emptyStatus, error: true }
+  }
+}
 
 async function refreshAll() {
   const list = [...channels.value]
@@ -82,9 +118,8 @@ async function refreshAll() {
   allFailed.value = false
   lastError.value = ''
 
-  const empty = { online: null, error: false, viewers: null, title: null, game: null, avatar: null }
   for (const entry of list) {
-    status[keyOf(entry)] = { ...empty }
+    status[keyOf(entry)] = { ...emptyStatus }
   }
 
   const byPlatform = new Map()
@@ -101,23 +136,13 @@ async function refreshAll() {
     try {
       const results = await platform.checkChannels(entries.map((e) => e.name))
       for (let i = 0; i < entries.length; i++) {
-        const r = results[i]
-        status[keyOf(entries[i])] = r.exists
-          ? {
-              online: r.online,
-              error: false,
-              viewers: r.viewers,
-              title: r.title,
-              game: r.game,
-              avatar: r.avatar ?? null,
-            }
-          : { online: null, error: true, viewers: null, title: null, game: null, avatar: null }
+        applyResult(entries[i], results[i])
       }
       okCount += 1
     } catch (e) {
       errors.push(`${platform.name}: ${e?.message || 'ошибка запроса'}`)
       for (const entry of entries) {
-        status[keyOf(entry)] = { online: null, error: true, viewers: null, title: null, game: null, avatar: null }
+        status[keyOf(entry)] = { ...emptyStatus, error: true }
       }
     }
   }
@@ -134,7 +159,9 @@ function addChannel(name, platformId) {
   const platform = getPlatform(platformId)?.id || DEFAULT_PLATFORM
   const key = `${platform}:${trimmed.toLowerCase()}`
   if (channels.value.some((c) => keyOf(c) === key)) return
-  channels.value.push({ platform, name: trimmed })
+  const entry = { platform, name: trimmed }
+  channels.value.push(entry)
+  checkOne(entry)
 }
 
 function removeChannel(platformId, name) {
